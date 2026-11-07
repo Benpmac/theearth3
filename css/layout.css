@@ -1,0 +1,52 @@
+/* =====================================================================
+   layout.css — la charpente commune à tous les écrans
+   ---------------------------------------------------------------------
+   barre du haut  ·  <main> avec un seul écran visible  ·  barre d'onglets
+   (téléphone)
+   ===================================================================== */
+
+/* Sur l'écran du globe, tout tient dans la fenêtre ; ailleurs la page défile */
+body[data-screen="explore"] {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--sky-deep);
+}
+
+/* Le globe prend toute la hauteur qui reste sous la barre du haut, quelle que soit
+   la hauteur réelle de celle-ci (une ligne sur ordinateur, deux sur téléphone,
+   davantage avec un texte agrandi) : pas de hauteur calculée à la main. */
+body[data-screen="explore"] > .topbar {
+  flex: none;
+}
+
+body[data-screen="explore"] > main {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.page {
+  min-width: 0;
+}
+
+/* Conteneur centré des pages "papier" (destinations, ton avis) */
+.page--destinations,
+.page--feedback {
+  width: 100%;
+  max-width: var(--content);
+  margin-inline: auto;
+  padding-block: var(--sp-6) var(--sp-8);
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+/* Téléphone : barre d'onglets en bas, on laisse la place */
+@media (max-width: 899px) {
+  body {
+    padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px));
+  }
+
+}

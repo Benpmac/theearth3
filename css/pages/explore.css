@@ -1,0 +1,300 @@
+/* ---------------------------------------------------------------------
+   Écran du globe
+   --------------------------------------------------------------------- */
+
+.page--explore {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  color: var(--on-sky);
+  /* L'espace : un bleu nuit très sombre (Nuit 950), à peine éclairé derrière la planète
+     (Nuit 800), avec une nébuleuse presque invisible dans un coin (Nuit 600). */
+  background-color: var(--space);
+  background-image:
+    radial-gradient(circle 70vmax at 50% 55%, var(--space-glow) 0%, transparent 45%),
+    radial-gradient(ellipse 55% 45% at 88% 8%, var(--space-nebula) 0%, transparent 100%),
+    radial-gradient(ellipse 45% 40% at 6% 96%, var(--space-nebula) 0%, transparent 100%);
+}
+
+/* --- Les étoiles, en pur CSS (aucune image à télécharger) ----------------
+   Deux couches aux motifs de tailles différentes (389 px et 577 px) pour que
+   la répétition ne se voie pas : de petites étoiles nombreuses et pâles,
+   quelques étoiles plus grosses qui scintillent doucement. */
+.page--explore::before,
+.page--explore::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.page--explore::before {
+  opacity: 0.55;
+  background-image:
+    radial-gradient(1px 1px at 4% 12%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 17% 63%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 26% 31%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 33% 88%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 41% 6%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 47%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 59% 74%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 19%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 77% 58%, var(--star) 50%, transparent 51%),
+    radial-gradient(1px 1px at 85% 92%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 93% 36%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1px 1px at 9% 79%, var(--star) 50%, transparent 51%);
+  background-size: 389px 389px;
+}
+
+.page--explore::after {
+  opacity: 0.8;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 37% 71%, var(--star) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 63% 9%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 81% 44%, var(--star) 50%, transparent 51%),
+    radial-gradient(2px 2px at 92% 83%, var(--star-soft) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 22% 95%, var(--star) 50%, transparent 51%);
+  background-size: 577px 577px;
+  animation: twinkle 7s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle {
+  from { opacity: 0.8; }
+  to { opacity: 0.4; }
+}
+
+/* Mouvement réduit demandé par l'appareil : les étoiles ne scintillent pas */
+@media (prefers-reduced-motion: reduce) {
+  .page--explore::after {
+    animation: none;
+  }
+}
+
+.explore__bar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  padding-block: var(--sp-3) 0;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+}
+
+.explore__intro {
+  font-size: var(--text-md);
+  color: var(--on-sky-soft);
+}
+
+.explore__intro strong {
+  font-family: var(--font-title);
+  font-size: var(--step-2);
+  font-weight: 500;
+  letter-spacing: var(--tracking-title);
+  color: var(--on-sky);
+}
+
+.explore__facts {
+  font-size: var(--text-sm);
+  color: var(--on-sky-soft);
+}
+
+.globe {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  min-height: 0;
+}
+
+.globe__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+}
+
+.globe__canvas:active { cursor: grabbing; }
+.globe__canvas.is-over-country { cursor: pointer; }
+
+.globe__tooltip {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  background: rgb(10 16 36 / 0.92);
+  box-shadow: var(--shadow-float);
+  font-size: var(--text-sm);
+  pointer-events: none;
+  white-space: nowrap;
+  transform: translate(14px, -50%);
+}
+
+.globe__tooltip img {
+  width: 28px;
+  height: 21px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+.globe__tooltip span {
+  display: grid;
+}
+
+.globe__tooltip small {
+  color: var(--on-sky-soft);
+}
+
+.globe__tooltip .globe__tooltip-cta {
+  color: var(--accent-on-sky);
+  font-weight: 600;
+}
+
+.globe__controls {
+  position: absolute;
+  z-index: 4;
+  right: var(--gutter-r);
+  bottom: var(--sp-5);
+  display: grid;
+  gap: var(--sp-2);
+}
+
+.globe__btn {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--glass-line);
+  border-radius: 50%;
+  background: var(--glass);
+  color: var(--on-sky);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.globe__btn:hover {
+  background: var(--glass-strong);
+}
+
+.globe__hint {
+  position: absolute;
+  z-index: 3;
+  left: var(--gutter);
+  right: 80px;
+  bottom: var(--sp-5);
+  font-size: var(--text-sm);
+  color: var(--on-sky-soft);
+}
+
+/* Légende des couleurs */
+.legend:empty {
+  display: none;   /* pas de pastille vide pendant le chargement */
+}
+
+.legend {
+  position: absolute;
+  z-index: 3;
+  left: var(--gutter);
+  top: var(--sp-3);
+  display: grid;
+  gap: var(--sp-1);
+  max-width: 280px;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  background: rgb(10 16 36 / 0.6);
+  font-size: var(--text-xs);
+  color: var(--on-sky-soft);
+}
+
+.legend__swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-3);
+}
+
+.legend__swatches a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 28px;
+  color: var(--on-sky-soft);
+  text-decoration: none;
+}
+
+.legend__swatches a:hover {
+  color: var(--on-sky);
+  text-decoration: underline;
+}
+
+.legend i {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+/* Écran de chargement */
+.loader {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: none;
+  place-content: center;
+  justify-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-5);
+  text-align: center;
+  color: var(--on-sky-soft);
+}
+
+.is-loading .loader { display: grid; }
+
+.loader__ring {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 3px solid var(--glass-line);
+  border-top-color: var(--accent-on-sky);
+  animation: spin 900ms linear infinite;
+}
+
+.loader.is-error .loader__ring { display: none; }
+
+.loader__text {
+  max-width: 46ch;
+}
+
+.loader.is-error .loader__text {
+  color: var(--on-sky);
+  font-size: var(--text-md);
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+/* Téléphone : le globe occupe l'espace entre la barre du haut et les onglets
+   (la place des onglets est réservée par le padding-bottom du body, voir layout.css) */
+@media (max-width: 899px) {
+  .explore__facts {
+    display: none;
+  }
+
+  /* Sur téléphone, le globe d'abord : la légende et la consigne (répétée en bas) s'effacent */
+  .legend,
+  .explore__how {
+    display: none;
+  }
+
+  .globe__hint {
+    right: 84px;   /* ne passe pas sous les boutons de zoom */
+    bottom: var(--sp-4);
+    font-size: var(--text-xs);
+  }
+}
