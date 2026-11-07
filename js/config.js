@@ -35,6 +35,7 @@ export const FEEDBACK = {
 export const CREDITS = {
   people: [
     { name: "Pierre-Marie Cédric Benson", role: "Conception et développement" },
+    { name: "ASSI ASSI Shadrac", role: "Conception et développement" },
   ],
 };
 
